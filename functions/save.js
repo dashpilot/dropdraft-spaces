@@ -60,16 +60,18 @@ async function getContents() {
 
     for (const entry of files.entries) {
         const { name, path_lower } = entry;
-        console.log(path_lower);
-        const content = await dbx.filesDownload({
-            path: path_lower,
-        });
 
-        let data = matter(content.fileBinary.toString());
-        data.content = converter.makeHtml(data.content); // convert markdown to html
-        data.orig = content.fileBinary.toString();
+        if (entry[".tag"] === "file") {
+            const content = await dbx.filesDownload({
+                path: path_lower,
+            });
 
-        posts.push(data);
+            let data = matter(content.fileBinary.toString());
+            data.content = converter.makeHtml(data.content); // convert markdown to html
+            data.orig = content.fileBinary.toString();
+
+            posts.push(data);
+        }
     }
 
     return posts;
