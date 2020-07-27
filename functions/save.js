@@ -44,12 +44,15 @@ exports.handler = function(event, context, callback) {
                         })
                         .then((data) => {
                             const filecontents = data.fileBinary.toString();
-
-                            posts.push(matter(filecontents));
+                            let mypost = matter(filecontents);
+                            console.log(mypost);
+                            return posts.push(mypost);
                         })
                         .catch((error) => {
                             console.log("Error: file failed to download", name, error);
                         });
+
+                    console.log(posts);
 
                     // save the file
                     var params = {
