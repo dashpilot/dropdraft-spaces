@@ -29,7 +29,7 @@ exports.handler = async(event, context) {
 
     // Get all the posts in the root of our our Dropbox App's directory and save
     // them all to our local posts folder.
-    dbx
+    return posts = await dbx
         .filesListFolder({
             path: "",
         })
@@ -38,7 +38,7 @@ exports.handler = async(event, context) {
                 const { name, path_lower } = entry;
 
                 if (entry[".tag"] === "file") {
-                    posts = await dbx
+                    return posts = await dbx
                         .filesDownload({
                             path: path_lower,
                         })
