@@ -2,6 +2,7 @@ const AWS = require("aws-sdk");
 require("dotenv").load();
 require("isomorphic-fetch");
 const Dropbox = require("dropbox").Dropbox;
+const matter = require("gray-matter");
 
 // Configure client for use with Spaces
 const spacesEndpoint = new AWS.Endpoint(process.env.S3_ENDPOINT);
@@ -24,45 +25,45 @@ const dbx = new Dropbox({
 });
 
 exports.handler = function(event, context, callback) {
-    // Get all the posts in the root of our our Dropbox App's directory and save
-    // them all to our local posts folder.
-    dbx
-        .filesListFolder({
-            path: "",
-        })
-        .then((response) => {
-            response.entries.forEach((entry) => {
-                const { name, path_lower } = entry;
+    getContents().then(function(res) {
+        console.log(res);
 
-                if (entry[".tag"] === "file") {
-                    dbx
-                        .filesDownload({
-                            path: path_lower,
-                        })
-                        .then((data) => {
-                            const filecontents = data.fileBinary.toString();
+        // save the file
+        var params = {
+            Body: JSON.stringify(res),
+            Bucket: process.env.S3_BUCKET,
+            Key: "data.json",
+            ContentType: "application/json",
+            ACL: "public-read",
+        };
 
-                            // save the file
-                            var params = {
-                                Body: filecontents,
-                                Bucket: process.env.S3_BUCKET,
-                                Key: name,
-                                ContentType: "text/plain",
-                                ACL: "public-read",
-                            };
-
-                            s3.putObject(params, function(err, data) {
-                                if (err) console.log(err, err.stack);
-                                else console.log(data);
-                            });
-                        })
-                        .catch((error) => {
-                            console.log("Error: file failed to download", name, error);
-                        });
-                }
-            });
-        })
-        .catch((error) => {
-            console.log(error);
+        s3.putObject(params, function(err, data) {
+            if (err) console.log(err, err.stack);
+            else console.log(data);
         });
+
+        callback(null, {
+            statusCode: 200,
+            body: "OK",
+        });
+    });
 };
+
+async function getContents() {
+    const posts = [];
+
+    const files = await dbx.filesListFolder({
+        path: "",
+    });
+
+    for (const entry of files.entries) {
+        const { name, path_lower } = entry;
+        console.log(path_lower);
+        const content = await dbx.filesDownload({
+            path: path_lower,
+        });
+        posts.push(matter(content.fileBinary.toString()));
+    }
+
+    return posts;
+}
