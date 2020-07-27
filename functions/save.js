@@ -56,10 +56,13 @@ async function getContents(mypath) {
 
     const files = await dbx.filesListFolder({
         path: mypath,
+        recursive: true,
     });
 
     for (const entry of files.entries) {
         const { name, path_lower } = entry;
+
+        //console.log(entry);
 
         if (entry[".tag"] === "file") {
             const content = await dbx.filesDownload({
@@ -69,12 +72,9 @@ async function getContents(mypath) {
             let data = matter(content.fileBinary.toString());
             data.content = converter.makeHtml(data.content); // convert markdown to html
             data.orig = content.fileBinary.toString();
+            data.path = entry.path_lower;
 
             posts.push(data);
-        }
-
-        if (entry[".tag"] === "folder") {
-            getContents(path_lower);
         }
     }
 
