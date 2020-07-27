@@ -38,7 +38,7 @@ exports.handler = async(event, context) => {
                 const { name, path_lower } = entry;
 
                 if (entry[".tag"] === "file") {
-                    return dbx
+                    let mypost2 = await dbx
                         .filesDownload({
                             path: path_lower,
                         })
@@ -46,14 +46,18 @@ exports.handler = async(event, context) => {
                             const filecontents = data.fileBinary.toString();
                             let mypost = matter(filecontents);
                             console.log(mypost);
+                            return mypost;
                         })
                         .catch((error) => {
                             console.log("Error: file failed to download", name, error);
                         });
                 }
+
+                console.log(mypost2);
+                posts.push(mypost2);
             });
 
-            console.log(posts);
+
 
             // save the file
             var params = {
