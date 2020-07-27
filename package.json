@@ -14,6 +14,7 @@
         "dropbox": "^4.0.5",
         "gray-matter": "^4.0.2",
         "handlebars": "^4.7.6",
-        "isomorphic-fetch": "^2.2.1"
+        "isomorphic-fetch": "^2.2.1",
+        "showdown": "^1.9.1"
     }
 }

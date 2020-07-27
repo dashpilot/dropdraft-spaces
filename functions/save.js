@@ -3,6 +3,8 @@ require("dotenv").load();
 require("isomorphic-fetch");
 const Dropbox = require("dropbox").Dropbox;
 const matter = require("gray-matter");
+const showdown = require("showdown");
+const converter = new showdown.Converter();
 
 // Configure client for use with Spaces
 const spacesEndpoint = new AWS.Endpoint(process.env.S3_ENDPOINT);
@@ -62,7 +64,11 @@ async function getContents() {
         const content = await dbx.filesDownload({
             path: path_lower,
         });
-        posts.push(matter(content.fileBinary.toString()));
+
+        let data = matter(content.fileBinary.toString());
+        data.content = converter.makeHtml(data.content); // convert markdown to html
+
+        posts.push(data);
     }
 
     return posts;
