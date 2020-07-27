@@ -29,7 +29,7 @@ exports.handler = async function(event) {
 
     // Get all the posts in the root of our our Dropbox App's directory and save
     // them all to our local posts folder.
-    const result = await dbx
+    dbx
         .filesListFolder({
             path: "",
         })
@@ -38,40 +38,44 @@ exports.handler = async function(event) {
                 const { name, path_lower } = entry;
 
                 if (entry[".tag"] === "file") {
-                    let mypost2 = await dbx
-                        .filesDownload({
-                            path: path_lower,
-                        })
-                        .then((data) => {
-                            const filecontents = data.fileBinary.toString();
-                            let mypost = matter(filecontents);
-                            console.log(mypost);
-                            return mypost;
-                        })
-                        .catch((error) => {
-                            console.log("Error: file failed to download", name, error);
-                        });
+                    getContents(path_lower);
+
+                    /*
+                                                  let mypost2 = await dbx
+                                                      .filesDownload({
+                                                          path: path_lower,
+                                                      })
+                                                      .then((data) => {
+                                                          const filecontents = data.fileBinary.toString();
+                                                          let mypost = matter(filecontents);
+                                                          console.log(mypost);
+                                                          return mypost;
+                                                      })
+                                                      .catch((error) => {
+                                                          console.log("Error: file failed to download", name, error);
+                                                      });
+                                                      */
                 }
 
-                console.log(mypost2);
-                posts.push(mypost2);
+                //console.log(mypost2);
+                //posts.push(mypost2);
             });
 
+            /*
+                              // save the file
+                              var params = {
+                                  Body: JSON.stringify(posts),
+                                  Bucket: process.env.S3_BUCKET,
+                                  Key: "data.json",
+                                  ContentType: "application/json",
+                                  ACL: "public-read",
+                              };
 
-
-            // save the file
-            var params = {
-                Body: JSON.stringify(posts),
-                Bucket: process.env.S3_BUCKET,
-                Key: "data.json",
-                ContentType: "application/json",
-                ACL: "public-read",
-            };
-
-            s3.putObject(params, function(err, data) {
-                if (err) console.log(err, err.stack);
-                else console.log(data);
-            });
+                              s3.putObject(params, function(err, data) {
+                                  if (err) console.log(err, err.stack);
+                                  else console.log(data);
+                              });
+                              */
         })
         .catch((error) => {
             console.log(error);
@@ -79,6 +83,24 @@ exports.handler = async function(event) {
 
     return {
         statusCode: 200,
-        body: "pong"
+        body: "pong",
     };
 };
+
+async function getContents(path_lower) {
+    const post = await dbx
+        .filesDownload({
+            path: path_lower,
+        })
+        .then((data) => {
+            const filecontents = data.fileBinary.toString();
+            let mypost = matter(filecontents);
+            console.log(mypost);
+            return mypost;
+        })
+        .catch((error) => {
+            console.log("Error: file failed to download", name, error);
+        });
+
+    console.log(post);
+}
