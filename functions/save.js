@@ -76,4 +76,9 @@ exports.handler = async function(event) {
         .catch((error) => {
             console.log(error);
         });
+
+    return {
+        statusCode: 200,
+        body: "pong"
+    };
 };
