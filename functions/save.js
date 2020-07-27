@@ -24,12 +24,12 @@ const dbx = new Dropbox({
     accessToken: process.env.DBX_ACCESS_TOKEN,
 });
 
-exports.handler = async(event, context) => {
+handler = async(event, context) => {
     let posts = [];
 
     // Get all the posts in the root of our our Dropbox App's directory and save
     // them all to our local posts folder.
-    const result = await dbx
+    dbx
         .filesListFolder({
             path: "",
         })
@@ -38,22 +38,18 @@ exports.handler = async(event, context) => {
                 const { name, path_lower } = entry;
 
                 if (entry[".tag"] === "file") {
-                    let mypost = await dbx
+                    return dbx
                         .filesDownload({
                             path: path_lower,
                         })
                         .then((data) => {
                             const filecontents = data.fileBinary.toString();
                             let mypost = matter(filecontents);
-
-                            return mypost;
+                            console.log(mypost);
                         })
                         .catch((error) => {
                             console.log("Error: file failed to download", name, error);
                         });
-
-                    console.log(mypost);
-                    return posts.push(mypost);
                 }
             });
 
