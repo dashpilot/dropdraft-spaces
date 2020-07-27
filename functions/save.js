@@ -23,7 +23,7 @@ const dbx = new Dropbox({
     accessToken: process.env.DBX_ACCESS_TOKEN,
 });
 
-exports.handler = function(event, context, callback) {
+exports.handler = async function(event, context, callback) {
     // Get all the posts in the root of our our Dropbox App's directory and save
     // them all to our local posts folder.
     dbx
