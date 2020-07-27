@@ -14,9 +14,15 @@ Publish markdown files from your Dropbox to Digitalocean Spaces or S3
 
 4.  Create the following environment variables:
 
-`DBX_ACCESS_TOKEN`: your Dropbox access token (from step 2)\\
-`S3_ENDPOINT`: your S3/Spaces endpoint (e.g ams3.digitaloceanspaces.com)\\
-`S3_KEY`: your S3/Spaces key\\
-`S3_SECRET`: your S3/Spaces secret\\
-`S3_BUCKET`: your S3/Spaces bucket
+`DBX_ACCESS_TOKEN`: your Dropbox access token (from step 2)\
+`S3_ENDPOINT`: your S3/Spaces endpoint (e.g ams3.digitaloceanspaces.com)\
+`S3_KEY`: your S3/Spaces key\
+`S3_SECRET`: your S3/Spaces secret\
+`S3_BUCKET`: your S3/Spaces bucket\
 `SITE_URL`: your Netlify site URL (NO trailing slash)
+
+# Todo
+- delete all existing files in spaces/s3 before uploading
+- check if file is a markdown file
+- generate single json file from all content
+- allow image upload
