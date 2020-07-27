@@ -1,0 +1,21 @@
+{
+  "name": "dropdraft-spaces",
+  "version": "1.0.0",
+  "description": "Publish markdown files from your Dropbox to Digitalocean Spaces or S3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.709.0",
+    "dotenv": "^6.0.0",
+    "dropbox": "^4.0.5",
+    "fs-extra": "^6.0.1",
+    "path": "^0.12.7",
+    "isomorphic-fetch": "^2.2.1",
+    "handlebars": "^4.7.6",
+    "showdown": "^1.9.1"
+  }
+}
