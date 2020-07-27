@@ -67,6 +67,7 @@ async function getContents() {
 
         let data = matter(content.fileBinary.toString());
         data.content = converter.makeHtml(data.content); // convert markdown to html
+        data.orig = content.fileBinary.toString();
 
         posts.push(data);
     }
