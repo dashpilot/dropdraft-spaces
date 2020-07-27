@@ -27,7 +27,7 @@ const dbx = new Dropbox({
 });
 
 exports.handler = function(event, context, callback) {
-    getContents().then(function(res) {
+    getContents("").then(function(res) {
         console.log(res);
 
         // save the file
@@ -51,11 +51,11 @@ exports.handler = function(event, context, callback) {
     });
 };
 
-async function getContents() {
+async function getContents(mypath) {
     const posts = [];
 
     const files = await dbx.filesListFolder({
-        path: "",
+        path: mypath,
     });
 
     for (const entry of files.entries) {
@@ -71,6 +71,10 @@ async function getContents() {
             data.orig = content.fileBinary.toString();
 
             posts.push(data);
+        }
+
+        if (entry[".tag"] === "folder") {
+            getContents(path_lower);
         }
     }
 
