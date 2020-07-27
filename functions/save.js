@@ -1,8 +1,6 @@
 const AWS = require("aws-sdk");
 require("dotenv").load();
 require("isomorphic-fetch");
-//const path = require("path");
-//const fs = require("fs-extra");
 const Dropbox = require("dropbox").Dropbox;
 
 // Configure client for use with Spaces
