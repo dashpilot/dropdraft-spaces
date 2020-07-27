@@ -1,7 +1,6 @@
 const AWS = require("aws-sdk");
 require("dotenv").load();
 require("isomorphic-fetch");
-const matter = require("gray-matter");
 const Dropbox = require("dropbox").Dropbox;
 
 // Configure client for use with Spaces
@@ -24,9 +23,7 @@ const dbx = new Dropbox({
     accessToken: process.env.DBX_ACCESS_TOKEN,
 });
 
-exports.handler = async function(event) {
-    let posts = [];
-
+exports.handler = function(event, context, callback) {
     // Get all the posts in the root of our our Dropbox App's directory and save
     // them all to our local posts folder.
     dbx
@@ -38,69 +35,34 @@ exports.handler = async function(event) {
                 const { name, path_lower } = entry;
 
                 if (entry[".tag"] === "file") {
-                    getContents(path_lower);
+                    dbx
+                        .filesDownload({
+                            path: path_lower,
+                        })
+                        .then((data) => {
+                            const filecontents = data.fileBinary.toString();
 
-                    /*
-                                                  let mypost2 = await dbx
-                                                      .filesDownload({
-                                                          path: path_lower,
-                                                      })
-                                                      .then((data) => {
-                                                          const filecontents = data.fileBinary.toString();
-                                                          let mypost = matter(filecontents);
-                                                          console.log(mypost);
-                                                          return mypost;
-                                                      })
-                                                      .catch((error) => {
-                                                          console.log("Error: file failed to download", name, error);
-                                                      });
-                                                      */
+                            // save the file
+                            var params = {
+                                Body: filecontents,
+                                Bucket: process.env.S3_BUCKET,
+                                Key: name,
+                                ContentType: "text/plain",
+                                ACL: "public-read",
+                            };
+
+                            s3.putObject(params, function(err, data) {
+                                if (err) console.log(err, err.stack);
+                                else console.log(data);
+                            });
+                        })
+                        .catch((error) => {
+                            console.log("Error: file failed to download", name, error);
+                        });
                 }
-
-                //console.log(mypost2);
-                //posts.push(mypost2);
             });
-
-            /*
-                              // save the file
-                              var params = {
-                                  Body: JSON.stringify(posts),
-                                  Bucket: process.env.S3_BUCKET,
-                                  Key: "data.json",
-                                  ContentType: "application/json",
-                                  ACL: "public-read",
-                              };
-
-                              s3.putObject(params, function(err, data) {
-                                  if (err) console.log(err, err.stack);
-                                  else console.log(data);
-                              });
-                              */
         })
         .catch((error) => {
             console.log(error);
         });
-
-    return {
-        statusCode: 200,
-        body: "pong",
-    };
 };
-
-async function getContents(path_lower) {
-    const post = await dbx
-        .filesDownload({
-            path: path_lower,
-        })
-        .then((data) => {
-            const filecontents = data.fileBinary.toString();
-            let mypost = matter(filecontents);
-            console.log(mypost);
-            return mypost;
-        })
-        .catch((error) => {
-            console.log("Error: file failed to download", name, error);
-        });
-
-    console.log(post);
-}
