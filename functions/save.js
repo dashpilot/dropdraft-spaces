@@ -35,30 +35,8 @@ exports.handler = function(event, context, callback) {
                 const { name, path_lower } = entry;
 
                 if (entry[".tag"] === "file") {
-                    dbx
-                        .filesDownload({
-                            path: path_lower,
-                        })
-                        .then((data) => {
-                            const filecontents = data.fileBinary.toString();
-
-                            // save the file
-                            var params = {
-                                Body: filecontents,
-                                Bucket: process.env.S3_BUCKET,
-                                Key: name,
-                                ContentType: "text/plain",
-                                ACL: "public-read",
-                            };
-
-                            s3.putObject(params, function(err, data) {
-                                if (err) console.log(err, err.stack);
-                                else console.log(data);
-                            });
-                        })
-                        .catch((error) => {
-                            console.log("Error: file failed to download", name, error);
-                        });
+                    let result = await getContents(path_lower);
+                    console.log(result);
                 }
             });
         })
@@ -66,3 +44,33 @@ exports.handler = function(event, context, callback) {
             console.log(error);
         });
 };
+
+async function getContents(path_lower) {
+    return dbx
+        .filesDownload({
+            path: path_lower,
+        })
+        .then((data) => {
+            const filecontents = data.fileBinary.toString();
+            return filecontents;
+
+            /*
+                          // save the file
+                          var params = {
+                              Body: filecontents,
+                              Bucket: process.env.S3_BUCKET,
+                              Key: name,
+                              ContentType: "text/plain",
+                              ACL: "public-read",
+                          };
+
+                          s3.putObject(params, function(err, data) {
+                              if (err) console.log(err, err.stack);
+                              else console.log(data);
+                          });
+                          */
+        })
+        .catch((error) => {
+            console.log("Error: file failed to download", name, error);
+        });
+}
