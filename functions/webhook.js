@@ -32,7 +32,7 @@ exports.handler = function(event, context, callback) {
 
 
     // call save script
-    fetch('/.netlify/functions/save', {
+    fetch(process.env.SITE_URL + '/.netlify/functions/save', {
       method: "GET",
       body: ""
     }).then(res => {
