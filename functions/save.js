@@ -77,10 +77,5 @@ exports.handler = function(event, context, callback) {
     });
 
 
-} catch (error) {
-  return {
-    statusCode: 401,
-    body: "Not Authorized.",
-  };
-}
+
 };
