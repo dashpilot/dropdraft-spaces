@@ -24,7 +24,7 @@ const dbx = new Dropbox({
     accessToken: process.env.DBX_ACCESS_TOKEN,
 });
 
-exports.handler = function(event, context, callback) {
+exports.handler = async function(event, context) {
     let posts = [];
 
     // Get all the posts in the root of our our Dropbox App's directory and save
@@ -38,7 +38,7 @@ exports.handler = function(event, context, callback) {
                 const { name, path_lower } = entry;
 
                 if (entry[".tag"] === "file") {
-                    return dbx
+                    posts = await dbx
                         .filesDownload({
                             path: path_lower,
                         })
