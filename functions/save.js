@@ -38,7 +38,7 @@ exports.handler = function(event, context, callback) {
                 const { name, path_lower } = entry;
 
                 if (entry[".tag"] === "file") {
-                    dbx
+                    return dbx
                         .filesDownload({
                             path: path_lower,
                         })
@@ -51,23 +51,23 @@ exports.handler = function(event, context, callback) {
                         .catch((error) => {
                             console.log("Error: file failed to download", name, error);
                         });
-
-                    console.log(posts);
-
-                    // save the file
-                    var params = {
-                        Body: JSON.stringify(posts),
-                        Bucket: process.env.S3_BUCKET,
-                        Key: "data.json",
-                        ContentType: "application/json",
-                        ACL: "public-read",
-                    };
-
-                    s3.putObject(params, function(err, data) {
-                        if (err) console.log(err, err.stack);
-                        else console.log(data);
-                    });
                 }
+            });
+
+            console.log(posts);
+
+            // save the file
+            var params = {
+                Body: JSON.stringify(posts),
+                Bucket: process.env.S3_BUCKET,
+                Key: "data.json",
+                ContentType: "application/json",
+                ACL: "public-read",
+            };
+
+            s3.putObject(params, function(err, data) {
+                if (err) console.log(err, err.stack);
+                else console.log(data);
             });
         })
         .catch((error) => {
