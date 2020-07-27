@@ -1,6 +1,7 @@
 const AWS = require("aws-sdk");
 require("dotenv").load();
 require("isomorphic-fetch");
+const matter = require("gray-matter");
 const Dropbox = require("dropbox").Dropbox;
 
 // Configure client for use with Spaces
@@ -24,6 +25,8 @@ const dbx = new Dropbox({
 });
 
 exports.handler = function(event, context, callback) {
+    let posts = [];
+
     // Get all the posts in the root of our our Dropbox App's directory and save
     // them all to our local posts folder.
     dbx
@@ -42,23 +45,25 @@ exports.handler = function(event, context, callback) {
                         .then((data) => {
                             const filecontents = data.fileBinary.toString();
 
-                            // save the file
-                            var params = {
-                                Body: filecontents,
-                                Bucket: process.env.S3_BUCKET,
-                                Key: name,
-                                ContentType: "text/plain",
-                                ACL: "public-read",
-                            };
-
-                            s3.putObject(params, function(err, data) {
-                                if (err) console.log(err, err.stack);
-                                else console.log(data);
-                            });
+                            posts.push(matter(filecontents));
                         })
                         .catch((error) => {
                             console.log("Error: file failed to download", name, error);
                         });
+
+                    // save the file
+                    var params = {
+                        Body: JSON.stringify(posts),
+                        Bucket: process.env.S3_BUCKET,
+                        Key: "data.json",
+                        ContentType: "application/json",
+                        ACL: "public-read",
+                    };
+
+                    s3.putObject(params, function(err, data) {
+                        if (err) console.log(err, err.stack);
+                        else console.log(data);
+                    });
                 }
             });
         })
