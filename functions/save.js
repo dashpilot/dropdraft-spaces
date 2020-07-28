@@ -1,6 +1,7 @@
 const AWS = require("aws-sdk");
 require("dotenv").load();
 require("isomorphic-fetch");
+const Buffer = require("buffer/").Buffer;
 const Dropbox = require("dropbox").Dropbox;
 const matter = require("gray-matter");
 const showdown = require("showdown");
@@ -28,7 +29,7 @@ const dbx = new Dropbox({
 
 exports.handler = function(event, context, callback) {
     getContents("").then(function(res) {
-        console.log(res);
+        //console.log(res);
 
         // save the file
         var params = {
@@ -69,14 +70,37 @@ async function getContents(mypath) {
                 path: path_lower,
             });
 
-            let data = matter(content.fileBinary.toString());
-            data.content = converter.makeHtml(data.content); // convert markdown to html
-            data.orig = content.fileBinary.toString();
-            data.path = entry.path_lower;
+            let ext = getExtension(path_lower);
 
-            posts.push(data);
+            if (ext == "txt" || ext == "md" || ext == "markdown") {
+                let data = matter(content.fileBinary.toString());
+                data.content = converter.makeHtml(data.content); // convert markdown to html
+                data.orig = content.fileBinary.toString();
+                data.path = entry.path_lower;
+                posts.push(data);
+            } else if (ext == "jpg" || ext == "png" || ext == "gif") {
+                let mypath = entry.path_lower.substring(1);
+
+                // save the file
+                var params = {
+                    Body: content.fileBinary,
+                    Bucket: process.env.S3_BUCKET,
+                    Key: mypath,
+                    ContentType: "image/png",
+                    ACL: "public-read",
+                };
+
+                s3.putObject(params, function(err, data) {
+                    if (err) console.log(err, err.stack);
+                    else console.log(data);
+                });
+            }
         }
     }
 
     return posts;
+}
+
+function getExtension(filename) {
+    return filename.split(".").pop();
 }
