@@ -5,7 +5,8 @@ Publish markdown files and images from your Dropbox to Digitalocean Spaces or S3
 ## How to set up
 
 ### 1. Deploy this repo to Netlify
-Press the deploy to netlify button below:\
+Press the deploy to netlify button below:
+
 <a href="https://app.netlify.com/start/deploy?repository=https://github.com/dashpilot/dropdraft-spaces"><img src="https://www.netlify.com/img/deploy/button.svg" /></a>
 
 ### 2. In Dropbox
