@@ -30,3 +30,4 @@ Create the following environment variables:
 - ~~check if file is a markdown file~~ - done
 - ~~generate single json file from all content~~ - done
 - ~~implement image upload~~ - done
+- don't upload image if it already exists
