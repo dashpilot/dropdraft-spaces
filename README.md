@@ -11,7 +11,7 @@ Press the deploy to netlify button below:
 
 ### 2. In Dropbox
 
--  Go to <https://www.dropbox.com/developers/apps/create> and create a new Dropbox app.\
+-  Go to <https://www.dropbox.com/developers/apps/create> and create a new Dropbox app.
 -  Generate a new access token and copy it
 -  Fill in the following webhook: <https://{your-subdomain}.netlify.app/.netlify/functions/webhook>
 
