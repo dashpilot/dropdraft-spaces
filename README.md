@@ -1,8 +1,12 @@
 # Dropdraft - turn your Dropbox into your website's backend
 
-Publish markdown files and images from your Dropbox to Digitalocean Spaces or S3. Markdown files will be made available as a JSON API.
+Publish markdown files and images from your Dropbox to Digitalocean Spaces or S3. Markdown files will be made available as a JSON API, with support for YAML frontmatter.
 
 ## How to set up
+
+### Deploy this repo to Netlify
+Press the deploy to netlify button below:
+<a href="https://app.netlify.com/start/deploy?repository=https://github.com/dashpilot/dropdraft-spaces"><img src="https://www.netlify.com/img/deploy/button.svg" /></a>
 
 ### In Dropbox
 
