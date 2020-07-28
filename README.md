@@ -1,6 +1,6 @@
-# dropdraft-spaces
+# Dropdraft - turn your Dropbox into your website's backend
 
-Publish markdown files from your Dropbox to Digitalocean Spaces or S3
+Publish markdown files and images from your Dropbox to Digitalocean Spaces or S3. Markdown files will be made available as a JSON API.
 
 ## How to set up
 
